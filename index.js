@@ -30,7 +30,7 @@ async function buscar(){
     driver.close();
 }
 
-criarRelacionamento('João', 'Maria');
+// criarRelacionamento('Maria', 'Pedro');
 
 async function criarRelacionamento(nome1, nome2){
     var session = driver.session();
@@ -39,6 +39,19 @@ async function criarRelacionamento(nome1, nome2){
         nome1: nome1,
         nome2: nome2
     }).then(result => console.log(result.summary.counters._stats.relationshipsCreated));
+
+    session.close();
+    driver.close();
+}
+
+listarAmigos('Maria');
+
+async function listarAmigos(nome){
+    var session = driver.session();
+
+    await session.run('MATCH (p:Pessoa)-[:AMIGO]->(p2:Pessoa) WHERE p.nome = $nome RETURN p2.nome as amigos',{
+        nome:nome
+    }).then(result => console.log(result.records));
 
     session.close();
     driver.close();
