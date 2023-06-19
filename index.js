@@ -19,12 +19,26 @@ async function salvar(){
     driver.close();
 }
 
-buscar();
+// buscar();
 
 async function buscar(){
     var session = driver.session();
 
     await session.run('MATCH (p:Pessoa) RETURN p.nome as nome, p.idade as idade').then(result => console.log(result.records));
+
+    session.close();
+    driver.close();
+}
+
+criarRelacionamento('João', 'Maria');
+
+async function criarRelacionamento(nome1, nome2){
+    var session = driver.session();
+
+    await session.run('MATCH (p1:Pessoa{nome:$nome1}) OPTIONAL MATCH (p2:Pessoa{nome:$nome2}) CREATE (p1)-[:AMIGO]->(p2)',{
+        nome1: nome1,
+        nome2: nome2
+    }).then(result => console.log(result.summary.counters._stats.relationshipsCreated));
 
     session.close();
     driver.close();
